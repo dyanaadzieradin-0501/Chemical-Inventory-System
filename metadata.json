@@ -1,0 +1,10 @@
+{
+  "name": "Remix Remix Chemical Inventory System (CIS)",
+  "description": "Sistem Pengurusan \u0026 Penjejakan Inventori Bahan Kimia Makmal Bersepadu dengan label QR Code, amaran luput \u0026 stok rendah, pemindahan lokasi, pelupusan 2 langkah, dan audit trail.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
