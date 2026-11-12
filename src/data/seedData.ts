@@ -453,7 +453,9 @@ export const DEMO_USERS: import('../types').UserProfile[] = [
     department: 'Bahagian Penyelidikan & Teknologi Makmal LGM',
     status: 'ACTIVE',
     registeredDate: '2024-01-15',
-    password: 'password123'
+    password: 'password123',
+    hasFaceBiometric: true,
+    faceEnrollmentDate: '2024-01-16'
   },
   {
     id: 'user-admin-2',
@@ -465,7 +467,9 @@ export const DEMO_USERS: import('../types').UserProfile[] = [
     department: 'Bahagian Kawalan Kualiti & Kimia Analisis',
     status: 'ACTIVE',
     registeredDate: '2023-08-10',
-    password: 'password123'
+    password: 'password123',
+    hasFaceBiometric: true,
+    faceEnrollmentDate: '2023-08-12'
   },
   {
     id: 'user-staff-1',
@@ -477,7 +481,9 @@ export const DEMO_USERS: import('../types').UserProfile[] = [
     department: 'Unit Operasi & Pengendalian Bahan Kimia',
     status: 'ACTIVE',
     registeredDate: '2024-03-01',
-    password: 'password123'
+    password: 'password123',
+    hasFaceBiometric: true,
+    faceEnrollmentDate: '2024-03-02'
   },
   {
     id: 'user-staff-2',
@@ -489,6 +495,8 @@ export const DEMO_USERS: import('../types').UserProfile[] = [
     department: 'Makmal Sintesis Organik & Mikrobiologi',
     status: 'ACTIVE',
     registeredDate: '2024-06-12',
-    password: 'password123'
+    password: 'password123',
+    hasFaceBiometric: true,
+    faceEnrollmentDate: '2024-06-14'
   }
 ];

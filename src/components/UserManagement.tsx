@@ -14,7 +14,8 @@ import {
   CheckCircle2,
   Trash2,
   Power,
-  ArrowRight
+  ArrowRight,
+  ScanFace
 } from 'lucide-react';
 
 interface UserManagementProps {
@@ -351,6 +352,12 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                       >
                         {user.role === 'ADMIN' ? 'Pegawai / Admin' : 'Staf Makmal'}
                       </span>
+                      {user.hasFaceBiometric && (
+                        <span className="text-[10px] font-semibold text-blue-700 bg-blue-50 px-1.5 py-0.2 rounded border border-blue-200 flex items-center gap-1 font-mono">
+                          <ScanFace className="w-3 h-3 text-blue-600" />
+                          <span>Wajah Berdaftar</span>
+                        </span>
+                      )}
                       {isCurrent && (
                         <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
                           Pengguna Aktif

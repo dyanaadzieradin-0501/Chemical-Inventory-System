@@ -11,6 +11,9 @@ export interface UserProfile {
   status?: 'ACTIVE' | 'INACTIVE';
   registeredDate?: string;
   password?: string;
+  facePhoto?: string;
+  hasFaceBiometric?: boolean;
+  faceEnrollmentDate?: string;
 }
 
 export type BottleStatus = 'IN_STORE' | 'IN_LAB' | 'PENDING_DISPOSAL' | 'DISPOSED';

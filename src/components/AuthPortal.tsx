@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { UserProfile, Role } from '../types';
 import { StorageService } from '../services/storageService';
+import { FaceRecognitionModal } from './FaceRecognitionModal';
 import {
   FlaskConical,
   ShieldCheck,
@@ -20,7 +21,11 @@ import {
   Layers,
   FileCheck2,
   ScanLine,
-  ChevronRight
+  ChevronRight,
+  ScanFace,
+  Tablet,
+  Smartphone,
+  Sparkles
 } from 'lucide-react';
 
 interface AuthPortalProps {
@@ -33,6 +38,7 @@ export const AuthPortal: React.FC<AuthPortalProps> = ({
   initialMode = 'signin'
 }) => {
   const [mode, setMode] = useState<'signin' | 'signup'>(initialMode);
+  const [isFaceModalOpen, setIsFaceModalOpen] = useState(false);
 
   // State Log Masuk
   const [loginIdentifier, setLoginIdentifier] = useState('');
@@ -50,6 +56,7 @@ export const AuthPortal: React.FC<AuthPortalProps> = ({
   const [signupRole, setSignupRole] = useState<Role>('STAFF');
   const [signupTitle, setSignupTitle] = useState('');
   const [signupDepartment, setSignupDepartment] = useState('');
+  const [signupEnableBiometric, setSignupEnableBiometric] = useState(true);
 
   // Status maklum balas
   const [error, setError] = useState<string | null>(null);
@@ -132,7 +139,8 @@ export const AuthPortal: React.FC<AuthPortalProps> = ({
       role: signupRole,
       title: signupTitle.trim(),
       department: signupDepartment.trim(),
-      password: signupPassword
+      password: signupPassword,
+      hasFaceBiometric: signupEnableBiometric
     });
 
     if (regResult.success && regResult.user) {
@@ -247,10 +255,53 @@ export const AuthPortal: React.FC<AuthPortalProps> = ({
           {/* Badan Tab 1: LOG MASUK (SIGN IN) */}
           {mode === 'signin' && (
             <div className="p-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-              {/* Kolum Kiri: Borang Log Masuk Standard */}
-              <div className="lg:col-span-7 space-y-4">
-                <div className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 pb-1 border-b border-slate-100">
-                  01. Masuk Menggunakan ID / Emel
+              {/* Kolum Kiri: Borang Log Masuk Standard & Pengecaman Wajah */}
+              <div className="lg:col-span-7 space-y-5">
+                {/* Pilihan A: Pengecaman Wajah Biometrik (Mobile / Tablet Optimized) */}
+                <div className="p-4 rounded-md border border-blue-200 bg-gradient-to-br from-blue-50/90 via-slate-50 to-indigo-50/70 shadow-2xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-md bg-blue-600 text-white flex items-center justify-center shadow-xs">
+                        <ScanFace className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-slate-900 text-xs">
+                            Pengecaman Wajah Biometrik (Face Login)
+                          </span>
+                          <span className="font-mono text-[9px] uppercase font-bold px-1.5 py-0.2 rounded bg-blue-600 text-white">
+                            Hands-Free OSH
+                          </span>
+                        </div>
+                        <span className="text-[10px] text-blue-700 font-medium flex items-center gap-1.5 mt-0.5">
+                          <Tablet className="w-3 h-3 text-blue-600" />
+                          <Smartphone className="w-3 h-3 text-blue-600" />
+                          <span>Dioptimumkan untuk Tablet Makmal & Peranti Mudah Alih</span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <p className="text-[11px] text-slate-600 leading-normal">
+                    Membolehkan kakitangan makmal mengimbas wajah secara bebas-sentuhan (hands-free) semasa memakai sarung tangan nitril (PPE) tanpa risiko pencemaran bahan kimia.
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsFaceModalOpen(true)}
+                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-semibold rounded text-xs shadow-2xs transition-all"
+                  >
+                    <ScanFace className="w-4 h-4" />
+                    <span>Buka Pengimbas Wajah Kamera Tablet/Telefon</span>
+                  </button>
+                </div>
+
+                <div className="relative flex py-1 items-center">
+                  <div className="flex-grow border-t border-slate-200" />
+                  <span className="flex-shrink mx-3 text-slate-400 text-[10px] uppercase font-mono tracking-wider font-semibold">
+                    Atau Log Masuk Menggunakan ID & Kata Laluan
+                  </span>
+                  <div className="flex-grow border-t border-slate-200" />
                 </div>
 
                 <form onSubmit={handleSignIn} className="space-y-3.5 text-xs">
@@ -741,6 +792,35 @@ export const AuthPortal: React.FC<AuthPortalProps> = ({
                   </div>
                 </div>
 
+                {/* Bahagian 4: Pendaftaran Pengecaman Wajah Biometrik (Mobile/Tablet) */}
+                <div className="p-3.5 bg-blue-50/70 border border-blue-200 rounded-md space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <ScanFace className="w-4 h-4 text-blue-600" />
+                      <span className="font-bold text-slate-800 text-xs">
+                        Aktifkan Pengecaman Wajah Biometrik (Face Login)
+                      </span>
+                      <span className="font-mono text-[9px] uppercase font-bold px-1.5 py-0.2 rounded bg-blue-100 text-blue-800 border border-blue-200">
+                        Tablet & Telefon
+                      </span>
+                    </div>
+
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={signupEnableBiometric}
+                        onChange={e => setSignupEnableBiometric(e.target.checked)}
+                        className="rounded text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="text-xs font-semibold text-slate-700">Daftar Biometrik</span>
+                    </label>
+                  </div>
+
+                  <p className="text-[11px] text-slate-600 leading-normal">
+                    Membolehkan anda log masuk secara automatik menggunakan kamera tablet atau telefon pintar makmal tanpa menanggalkan sarung tangan PPE.
+                  </p>
+                </div>
+
                 {/* Butang Tindakan Daftar */}
                 <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-slate-100">
                   <button
@@ -767,6 +847,13 @@ export const AuthPortal: React.FC<AuthPortalProps> = ({
           )}
         </div>
       </main>
+
+      {/* Modal Pengecaman Wajah Biometrik */}
+      <FaceRecognitionModal
+        isOpen={isFaceModalOpen}
+        onClose={() => setIsFaceModalOpen(false)}
+        onSuccess={onLoginSuccess}
+      />
 
       {/* Footer Portal */}
       <footer className="bg-white border-t border-slate-200 py-3 text-center text-slate-400 text-xs font-mono">

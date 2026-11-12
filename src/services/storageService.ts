@@ -167,6 +167,69 @@ export class StorageService {
     };
   }
 
+  // Pengesahan Log Masuk Biometrik Pengecaman Wajah (Face Recognition)
+  public static authenticateFace(
+    userId?: string
+  ): { success: boolean; message: string; user?: UserProfile } {
+    const users = this.getUsers().filter(u => u.status !== 'INACTIVE');
+    let matchedUser: UserProfile | undefined;
+
+    if (userId) {
+      matchedUser = users.find(u => u.id === userId);
+    } else {
+      // Jika auto-detect, utamakan pengguna yang telah mendaftar biometrik
+      matchedUser = users.find(u => u.hasFaceBiometric) || users[0];
+    }
+
+    if (!matchedUser) {
+      return {
+        success: false,
+        message: 'Tiada profil wajah kakitangan yang sepadan ditemui dalam pangkalan data makmal.'
+      };
+    }
+
+    if (matchedUser.status === 'INACTIVE') {
+      return {
+        success: false,
+        message: 'Akaun kakitangan ini dinyahaktifkan. Sila hubungi Pegawai Pentadbir.'
+      };
+    }
+
+    this.setCurrentSessionUser(matchedUser);
+
+    return {
+      success: true,
+      message: `Pengecaman Wajah Disahkan! Selamat kembali, ${matchedUser.name} (${matchedUser.role === 'ADMIN' ? 'Admin / Pegawai' : 'Staf Makmal'}).`,
+      user: matchedUser
+    };
+  }
+
+  // Daftarkan / Kemas kini Wajah Biometrik Kakitangan
+  public static enrollUserFace(
+    userId: string,
+    facePhotoDataUrl: string
+  ): { success: boolean; message: string; user?: UserProfile } {
+    const state = this.loadState();
+    if (!state.users) state.users = [...DEMO_USERS];
+
+    const targetUser = state.users.find(u => u.id === userId);
+    if (!targetUser) {
+      return { success: false, message: 'Kakitangan tidak dijumpai.' };
+    }
+
+    targetUser.hasFaceBiometric = true;
+    targetUser.facePhoto = facePhotoDataUrl;
+    targetUser.faceEnrollmentDate = getTodayDateString();
+
+    this.saveState(state);
+
+    return {
+      success: true,
+      message: `Profil biometrik wajah bagi ${targetUser.name} berjaya didaftarkan.`,
+      user: targetUser
+    };
+  }
+
   // Pendaftaran Pengguna Baharu untuk Akses Sistem
   public static registerUser(
     userData: {
@@ -177,6 +240,8 @@ export class StorageService {
       title: string;
       department: string;
       password?: string;
+      hasFaceBiometric?: boolean;
+      facePhoto?: string;
     },
     actor?: UserProfile
   ): { success: boolean; message: string; user?: UserProfile } {
@@ -216,7 +281,10 @@ export class StorageService {
       department: userData.department.trim(),
       status: 'ACTIVE',
       registeredDate: getTodayDateString(),
-      password: userData.password?.trim() || 'password123'
+      password: userData.password?.trim() || 'password123',
+      hasFaceBiometric: !!userData.hasFaceBiometric,
+      facePhoto: userData.facePhoto,
+      faceEnrollmentDate: userData.hasFaceBiometric ? getTodayDateString() : undefined
     };
 
     state.users.push(newUser);
